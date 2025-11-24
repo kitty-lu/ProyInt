@@ -17,53 +17,87 @@ feature_names = joblib.load("feature_names.joblib")  # Lista de columnas origina
 # --------------------------------------------------
 st.set_page_config(page_title="CardioRisk AI", page_icon="🫀", layout="wide")
 
-# CSS personalizado con diseño profesional moderno
-st.markdown("""
+# --------------------------------------------------
+# TEMA Y ESTILOS DINÁMICOS
+# --------------------------------------------------
+# Selector de Modo Oscuro en la barra lateral (al principio)
+modo_oscuro = st.sidebar.toggle("🌑 Modo Oscuro", value=False)
+
+# Definición de colores según el modo seleccionado
+if modo_oscuro:
+    theme = {
+        "bg_gradient": "linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%)",
+        "text_color": "#F8FAFC",
+        "card_bg": "rgba(30, 41, 59, 0.7)",
+        "card_border": "rgba(255, 255, 255, 0.1)",
+        "header_bg": "rgba(15, 23, 42, 0.8)",
+        "input_bg": "rgba(51, 65, 85, 0.6)",
+        "input_text": "#F8FAFC",
+        "sidebar_bg": "linear-gradient(180deg, #1e293b 0%, #0f172a 100%)",
+        "section_line": "linear-gradient(90deg, #38BDF8 0%, transparent 100%)",
+        "shadow_color": "rgba(0,0,0,0.5)"
+    }
+else:
+    theme = {
+        "bg_gradient": "linear-gradient(135deg, #E0F7FA 0%, #E3F2FD 50%, #F3E5F5 100%)",
+        "text_color": "#1E293B",
+        "card_bg": "rgba(255, 255, 255, 0.9)",
+        "card_border": "rgba(255, 255, 255, 0.8)",
+        "header_bg": "rgba(255, 255, 255, 0.85)",
+        "input_bg": "rgba(241, 245, 249, 0.8)",
+        "input_text": "#334155",
+        "sidebar_bg": "linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%)",
+        "section_line": "linear-gradient(90deg, #3498DB 0%, transparent 100%)",
+        "shadow_color": "rgba(31, 38, 135, 0.1)"
+    }
+
+# CSS Dinámico Inyectado
+st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
     /* Reset y fuentes globales */
-    html, body, [class*="css"]  {
+    html, body, [class*="css"]  {{
         font-family: 'Inter', sans-serif;
-        color: #1E293B;
-    }
+        color: {theme['text_color']};
+    }}
     
-    /* Fondo de la aplicación - GRADIENTE VIVO */
-    .stApp {
-        background: linear-gradient(135deg, #E0F7FA 0%, #E3F2FD 50%, #F3E5F5 100%);
+    /* Fondo de la aplicación */
+    .stApp {{
+        background: {theme['bg_gradient']};
         background-attachment: fixed;
-    }
+    }}
 
     /* Encabezado Principal - GLASSMORPHISM */
-    .main-header {
-        background: rgba(255, 255, 255, 0.85);
+    .main-header {{
+        background: {theme['header_bg']};
         backdrop-filter: blur(10px);
         padding: 3rem 2rem;
         border-radius: 24px;
         text-align: center;
         margin-bottom: 3rem;
-        box-shadow: 0 20px 40px rgba(31, 38, 135, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 20px 40px {theme['shadow_color']};
+        border: 1px solid {theme['card_border']};
         position: relative;
         overflow: hidden;
-    }
+    }}
     
-    .main-header::before {
+    .main-header::before {{
         content: "";
         position: absolute;
         top: -50%; left: -50%;
         width: 200%; height: 200%;
         background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
         animation: pulse-bg 15s infinite;
-    }
+    }}
 
-    @keyframes pulse-bg {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
+    @keyframes pulse-bg {{
+        0% {{ transform: scale(1); }}
+        50% {{ transform: scale(1.2); }}
+        100% {{ transform: scale(1); }}
+    }}
 
-    .main-header h1 {
+    .main-header h1 {{
         font-family: 'Inter', sans-serif;
         font-size: 4rem;
         font-weight: 800;
@@ -73,54 +107,58 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-    }
+    }}
+    
+    /* En modo oscuro, el título necesita ser blanco/brillante */
+    {".main-header h1 { background: linear-gradient(90deg, #E0F7FA 0%, #38BDF8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }" if modo_oscuro else ""}
 
-    .main-header p {
+    .main-header p {{
         font-size: 1.4rem;
-        color: #546E7A;
+        color: {theme['text_color']};
         margin-top: 15px;
         font-weight: 500;
-    }
+        opacity: 0.8;
+    }}
 
     /* Tarjetas de Contenido FLOTANTES */
-    .content-card {
-        background: rgba(255, 255, 255, 0.9);
+    .content-card {{
+        background: {theme['card_bg']};
         backdrop-filter: blur(8px);
         padding: 2.5rem;
         border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 15px 35px {theme['shadow_color']};
+        border: 1px solid {theme['card_border']};
         border-top: 6px solid #3498DB;
         margin-bottom: 2rem;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
+    }}
 
-    .content-card:hover {
+    .content-card:hover {{
         transform: translateY(-5px);
         box-shadow: 0 25px 50px rgba(52, 152, 219, 0.15);
         border-top: 6px solid #2980B9;
-    }
+    }}
 
-    .section-title {
+    .section-title {{
         font-size: 1.5rem;
         font-weight: 700;
-        color: #1E293B;
+        color: {theme['text_color']};
         margin-bottom: 2rem;
         display: flex;
         align-items: center;
         gap: 10px;
-    }
+    }}
     
-    .section-title::after {
+    .section-title::after {{
         content: "";
         flex-grow: 1;
         height: 2px;
-        background: linear-gradient(90deg, #3498DB 0%, transparent 100%);
+        background: {theme['section_line']};
         margin-left: 15px;
-    }
+    }}
 
     /* Botones VIBRANTES */
-    .stButton>button {
+    .stButton>button {{
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         color: white;
         font-size: 1.2rem;
@@ -133,47 +171,66 @@ st.markdown("""
         width: 100%;
         text-transform: uppercase;
         letter-spacing: 1.5px;
-    }
+    }}
 
-    .stButton>button:hover {
+    .stButton>button:hover {{
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 15px 30px rgba(79, 172, 254, 0.6);
         background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-    }
+    }}
 
     /* Inputs con estilo moderno */
-    .stNumberInput > div > div > input, .stSelectbox > div > div > div {
-        background-color: rgba(241, 245, 249, 0.8) !important;
+    .stNumberInput > div > div > input, .stSelectbox > div > div > div {{
+        background-color: {theme['input_bg']} !important;
         border: 2px solid transparent !important;
         border-radius: 12px !important;
-        color: #334155 !important;
+        color: {theme['input_text']} !important;
         transition: all 0.3s ease;
-    }
+    }}
     
-    .stNumberInput > div > div > input:focus, .stSelectbox > div > div > div:focus-within {
-        background-color: white !important;
+    .stNumberInput > div > div > input:focus, .stSelectbox > div > div > div:focus-within {{
+        background-color: {theme['card_bg']} !important;
         border: 2px solid #3498DB !important;
         box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1) !important;
-    }
+    }}
+    
+    /* Color del texto de la etiqueta del input */
+    .stNumberInput label, .stSelectbox label {{
+        color: {theme['text_color']} !important;
+    }}
+    
+    /* Ajuste para los iconos de ayuda */
+    .stTooltipIcon {{
+        color: {theme['text_color']} !important;
+    }}
 
     /* Sidebar estilizado */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%);
-        border-right: 1px solid #E2E8F0;
-    }
+    [data-testid="stSidebar"] {{
+        background: {theme['sidebar_bg']};
+        border-right: 1px solid {theme['card_border']};
+    }}
     
-    .sidebar-header {
+    /* Ajuste texto sidebar */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{
+         color: {theme['text_color']} !important;
+    }}
+    
+    .sidebar-header {{
         background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
-        color: white;
+        color: white !important;
         padding: 1.5rem;
         border-radius: 16px;
         text-align: center;
         margin-bottom: 2rem;
         box-shadow: 0 10px 20px rgba(44, 62, 80, 0.2);
-    }
+    }}
+    
+    .sidebar-header h2 {{
+        color: white !important;
+    }}
 
     /* Cajas de Resultado IMPACTANTES */
-    .result-box {
+    .result-box {{
         padding: 3rem;
         border-radius: 24px;
         text-align: center;
@@ -182,53 +239,53 @@ st.markdown("""
         overflow: hidden;
         box-shadow: 0 20px 50px rgba(0,0,0,0.2);
         backdrop-filter: blur(5px);
-    }
+    }}
 
-    .result-safe {
+    .result-safe {{
         background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
-    }
+    }}
 
-    .result-danger {
+    .result-danger {{
         background: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%);
-    }
+    }}
 
-    .result-icon {
+    .result-icon {{
         font-size: 6rem;
         margin-bottom: 1rem;
         filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
         animation: float 3s ease-in-out infinite;
-    }
+    }}
     
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0px); }
-    }
+    @keyframes float {{
+        0% {{ transform: translateY(0px); }}
+        50% {{ transform: translateY(-10px); }}
+        100% {{ transform: translateY(0px); }}
+    }}
     
-    .result-title {
+    .result-title {{
         font-size: 2.5rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
+    }}
     
-    .result-subtitle {
+    .result-subtitle {{
         font-size: 1.3rem;
         opacity: 0.95;
         font-weight: 500;
-    }
+    }}
 
     /* Animaciones */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeInUp {{
+        from {{ opacity: 0; transform: translateY(30px); }}
+        to {{ opacity: 1; transform: translateY(0); }}
+    }}
     
-    .animate-fade-in {
+    .animate-fade-in {{
         animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    }
+    }}
 
 </style>
 """, unsafe_allow_html=True)
